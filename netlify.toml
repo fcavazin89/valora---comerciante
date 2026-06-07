@@ -9,13 +9,6 @@
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
-# Redireciona tudo para o Next.js (necessário para rotas dinâmicas)
-[[redirects]]
-  from = "/*"
-  to = "/.netlify/functions/___netlify-handler"
-  status = 200
-  force = false
-
 # Headers de segurança
 [[headers]]
   for = "/*"
