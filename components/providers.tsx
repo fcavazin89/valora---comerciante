@@ -16,17 +16,27 @@ const Web3AuthProvider = dynamic(
 
 const queryClient = new QueryClient()
 
-const hasClientId = !!process.env.NEXT_PUBLIC_WEB3AUTH_CLIENT_ID
-
 export function Providers({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false)
+  const [clientId, setClientId] = useState("")
 
   useEffect(() => {
+    // Lê em runtime para garantir que pega o valor mesmo no Vercel
+    setClientId(process.env.NEXT_PUBLIC_WEB3AUTH_CLIENT_ID ?? "")
     setMounted(true)
   }, [])
 
-  // Sem clientId ou antes de montar: renderiza sem Web3Auth para evitar crash
-  if (!mounted || !hasClientId) {
+  // Antes de montar no browser: renderiza sem provider (SSR safe)
+  if (!mounted) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        {children}
+      </QueryClientProvider>
+    )
+  }
+
+  // Sem clientId configurado: não inicializa o Web3Auth para evitar crash
+  if (!clientId) {
     return (
       <QueryClientProvider client={queryClient}>
         {children}
